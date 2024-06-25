@@ -174,6 +174,7 @@ const sessionQrCodeImage = async (req, res) => {
       res.writeHead(200, {
         'Content-Type': 'image/png'
       })
+      console.log(qrImage);
       return qrImage.pipe(res)
     }
     return res.json({ success: false, message: 'qr code not ready or already scanned' })
