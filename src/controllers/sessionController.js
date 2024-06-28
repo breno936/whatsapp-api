@@ -16,15 +16,18 @@ const { sendErrorResponse, waitForNestedObject } = require('../utils');
 const startSession = async (req, res) => {
   try {
     const sessionId = req.params.sessionId;
-    const setupSessionReturn = setupSession(sessionId);
+    const setupSessionReturn = await setupSession(sessionId);
     if (!setupSessionReturn.success) {
       sendErrorResponse(res, 422, setupSessionReturn.message);
       return;
     }
 
-    // wait until the client is created
-    await waitForNestedObject(setupSessionReturn.client, 'pupPage');
-    res.json({ success: true, message: setupSessionReturn.message });
+    try {
+      await waitForNestedObject(setupSessionReturn.client, 'pupPage');
+      res.json({ success: true, message: setupSessionReturn.message });
+    } catch (err) {
+      sendErrorResponse(res, 500, err.message);
+    }
   } catch (error) {
     console.log('startSession ERROR', error);
     sendErrorResponse(res, 500, error.message);
@@ -47,7 +50,6 @@ const statusSession = async (req, res) => {
     const sessionId = req.params.sessionId;
     const sessionData = await validateSession(sessionId);
     res.json(sessionData);
-    return;
   } catch (error) {
     console.log('statusSession ERROR', error);
     sendErrorResponse(res, 500, error.message);
@@ -111,7 +113,8 @@ const sessionQrCodeImage = async (req, res) => {
         'Content-Type': 'image/png'
       });
       console.log(qrImage);
-      return qrImage.pipe(res);
+      qrImage.pipe(res);
+      return;
     }
     res.json({ success: false, message: 'qr code not ready or already scanned' });
   } catch (error) {
