@@ -87,7 +87,8 @@ const statusSession = async (req, res) => {
       }
     }
     */
-    res.json(sessionData)
+    res.json(sessionData);
+    return;
   } catch (error) {
     console.log('statusSession ERROR', error)
     /* #swagger.responses[500] = {
@@ -117,6 +118,7 @@ const statusSession = async (req, res) => {
 const sessionQrCode = async (req, res) => {
   // #swagger.summary = 'Get session QR code'
   // #swagger.description = 'QR code of the session with the given session ID.'
+
   try {
     const sessionId = req.params.sessionId
     const session = sessions.get(sessionId)
@@ -156,6 +158,8 @@ const sessionQrCode = async (req, res) => {
 const sessionQrCodeImage = async (req, res) => {
   // #swagger.summary = 'Get session QR code as image'
   // #swagger.description = 'QR code as image of the session with the given session ID.'
+  console.log("aaaaaaa");
+
   try {
     const sessionId = req.params.sessionId
     const session = sessions.get(sessionId)
